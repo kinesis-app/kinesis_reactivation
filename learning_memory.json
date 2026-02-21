@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "last_updated": "2026-02-17T07:54:23.565851",
+  "winning_messaging": [],
+  "failed_messaging": [],
+  "key_objections": [],
+  "emotional_triggers": [
+    {
+      "trigger": "** *\"The weight of an unfulfilled last wish.\"*\n\n**",
+      "lesson": "** Honor the final requests of loved ones as if they were urgent—because time may not wait.",
+      "outcome": "died",
+      "learned_at": "2026-02-17T01:07:06.621721"
+    },
+    {
+      "trigger": "** *\"The weight of a life lost too soon—what if one conversation could have chan",
+      "lesson": "** Small moments of connection can hold the power to alter destinies, so never underestimate the impact of reaching out.",
+      "outcome": "died",
+      "learned_at": "2026-02-17T01:07:21.807356"
+    },
+    {
+      "trigger": "** *\"Their final moments were captured in a form—cold, impersonal, and heartbrea",
+      "lesson": "** *Never let bureaucracy overshadow the humanity of those you serve.*",
+      "outcome": "died",
+      "learned_at": "2026-02-17T07:54:08.366781"
+    },
+    {
+      "trigger": "** *\"The weight of a life cut short—what if the last conversation was left unfin",
+      "lesson": "** Honor the present moment, for it’s the only time we’re truly guaranteed.",
+      "outcome": "died",
+      "learned_at": "2026-02-17T07:54:23.565805"
+    }
+  ],
+  "tone_patterns": [],
+  "qualification_insights": [],
+  "stage_timing_insights": []
+}

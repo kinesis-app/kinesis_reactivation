@@ -1,0 +1,102 @@
+{
+  "batches": [
+    {
+      "timestamp": "2026-02-17T01:07:21.814022",
+      "events": [
+        {
+          "row": {
+            "name": "Marcus Vane",
+            "email": "marcus@example.com",
+            "source": "form fill",
+            "behavior": "Downloaded whitepaper",
+            "recent_news": "Just expanded Valencia plant",
+            "role": "Plant Manager"
+          },
+          "email": "marcus@example.com",
+          "name": "Marcus Vane",
+          "source": "form fill",
+          "lead_id": "417119e03b867b478793d0c3",
+          "intent_score": 14,
+          "certainty_score": 17,
+          "qualification_status": "cold",
+          "needs_review": false,
+          "final_email": "DRAFT — DO NOT SEND\n\nMarcus, your recent Valencia plant expansion suggests a focus on operational efficiency.\n\nLyophilization often constrains parenteral drug throughput. Our controlled nucleation technology reduced primary drying times by 25% for a client with similar scale—without altering cake quality or reconstitution. This directly increased their annual output by 18%.\n\nIf this aligns with your priorities, I can share the case study. No obligation; only data.\n\nDisclaimer: Results may vary based on process parameters. SteriTech does not make regulatory or medical claims.\n\nLet me know if you’d prefer I remove you from future correspondence.\n\n---\n[Your Company Name]\n[Your Physical Business Address – required for compliance]\n[City, State, ZIP, Country]\n\nYou received this email because we believe you have an interest in our services. To unsubscribe from future emails, reply with \"Unsubscribe\" in the subject line or click here: [Unsubscribe Link]. We will remove you within 10 business days.",
+          "draft": "DRAFT — DO NOT SEND\n\nMarcus, your recent Valencia plant expansion suggests a focus on operational efficiency.\n\nLyophilization often constrains parenteral drug throughput. Our controlled nucleation technology reduced primary drying times by 25% for a client with similar scale—without altering cake quality or reconstitution. This directly increased their annual output by 18%.\n\nIf this aligns with your priorities, I can share the case study. No obligation; only data.\n\nDisclaimer: Results may vary based on process parameters. SteriTech does not make regulatory or medical claims.\n\nLet me know if you’d prefer I remove you from future correspondence.\n\n---\n[Your Company Name]\n[Your Physical Business Address – required for compliance]\n[City, State, ZIP, Country]\n\nYou received this email because we believe you have an interest in our services. To unsubscribe from future emails, reply with \"Unsubscribe\" in the subject line or click here: [Unsubscribe Link]. We will remove you within 10 business days.",
+          "sequence_emails": [],
+          "email_num": 1
+        },
+        {
+          "row": {
+            "name": "Sarah Jenkins",
+            "email": "sarah@example.com",
+            "source": "webinar",
+            "behavior": "Signed up for Q2 event",
+            "recent_news": "Closed Series A last month",
+            "role": "VP Marketing"
+          },
+          "email": "sarah@example.com",
+          "name": "Sarah Jenkins",
+          "source": "webinar",
+          "lead_id": "9bfe965a3ce7677d159ac083",
+          "intent_score": 14,
+          "certainty_score": 17,
+          "qualification_status": "cold",
+          "needs_review": false,
+          "final_email": "DRAFT — DO NOT SEND\n\nSarah, congratulations on your Series A close last month—€8M is a strong signal of confidence in your pipeline.\n\nSteriTech has provided sterile containment and filling solutions for 40 years, primarily to pharma and biotech firms scaling from clinical to commercial. Given your recent funding, you may now face decisions on aseptic processing that were previously deferred.\n\nIf your team is evaluating containment strategies, I can share case studies from similar Series A-stage companies. No obligation—only data.\n\nTo proceed, reply with a convenient time for a 15-minute call.\n\nFrancesco Rossi\nCEO, SteriTech Solutions SL\nValencia, Spain\n\n*No regulatory or medical claims are made. All data is historical and non-binding.*\n\n---\n[Your Company Name]\n[Your Physical Business Address – required for compliance]\n[City, State, ZIP, Country]\n\nYou received this email because we believe you have an interest in our services. To unsubscribe from future emails, reply with \"Unsubscribe\" in the subject line or click here: [Unsubscribe Link]. We will remove you within 10 business days.",
+          "draft": "DRAFT — DO NOT SEND\n\nSarah, congratulations on your Series A close last month—€8M is a strong signal of confidence in your pipeline.\n\nSteriTech has provided sterile containment and filling solutions for 40 years, primarily to pharma and biotech firms scaling from clinical to commercial. Given your recent funding, you may now face decisions on aseptic processing that were previously deferred.\n\nIf your team is evaluating containment strategies, I can share case studies from similar Series A-stage companies. No obligation—only data.\n\nTo proceed, reply with a convenient time for a 15-minute call.\n\nFrancesco Rossi\nCEO, SteriTech Solutions SL\nValencia, Spain\n\n*No regulatory or medical claims are made. All data is historical and non-binding.*\n\n---\n[Your Company Name]\n[Your Physical Business Address – required for compliance]\n[City, State, ZIP, Country]\n\nYou received this email because we believe you have an interest in our services. To unsubscribe from future emails, reply with \"Unsubscribe\" in the subject line or click here: [Unsubscribe Link]. We will remove you within 10 business days.",
+          "sequence_emails": [],
+          "email_num": 1
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-02-17T07:54:23.576433",
+      "events": [
+        {
+          "row": {
+            "name": "Marcus Vane",
+            "email": "marcus@example.com",
+            "source": "form fill",
+            "behavior": "Downloaded whitepaper",
+            "recent_news": "Just expanded Valencia plant",
+            "role": "Plant Manager"
+          },
+          "email": "marcus@example.com",
+          "name": "Marcus Vane",
+          "source": "form fill",
+          "lead_id": "417119e03b867b478793d0c3",
+          "intent_score": 20,
+          "certainty_score": 32,
+          "qualification_status": "cold",
+          "needs_review": false,
+          "final_email": "DRAFT — DO NOT SEND\n\nMarcus—congratulations on the Valencia plant expansion.\n\nLyophilization often becomes the bottleneck in expanded facilities. Our controlled-nucleation technology recently cut primary drying time by 25 % for a client with similar throughput goals, while maintaining cake elegance and reconstitution time.\n\nI have a one-page case study showing the impact on annual output. May I send it to you?\n\nIf this is not relevant, simply reply “unsubscribe” and I will remove you from my list.\n\nFrancesco Rossi\nCEO, SteriTech Solutions SL\n\n---\n[Your Company Name]\n[Your Physical Business Address – required for compliance]\n[City, State, ZIP, Country]\n\nYou received this email because we believe you have an interest in our services. To unsubscribe from future emails, reply with \"Unsubscribe\" in the subject line or click here: [Unsubscribe Link]. We will remove you within 10 business days.",
+          "draft": "DRAFT — DO NOT SEND\n\nMarcus—congratulations on the Valencia plant expansion.\n\nLyophilization often becomes the bottleneck in expanded facilities. Our controlled-nucleation technology recently cut primary drying time by 25 % for a client with similar throughput goals, while maintaining cake elegance and reconstitution time.\n\nI have a one-page case study showing the impact on annual output. May I send it to you?\n\nIf this is not relevant, simply reply “unsubscribe” and I will remove you from my list.\n\nFrancesco Rossi\nCEO, SteriTech Solutions SL\n\n---\n[Your Company Name]\n[Your Physical Business Address – required for compliance]\n[City, State, ZIP, Country]\n\nYou received this email because we believe you have an interest in our services. To unsubscribe from future emails, reply with \"Unsubscribe\" in the subject line or click here: [Unsubscribe Link]. We will remove you within 10 business days.",
+          "sequence_emails": [],
+          "email_num": 1
+        },
+        {
+          "row": {
+            "name": "Sarah Jenkins",
+            "email": "sarah@example.com",
+            "source": "webinar",
+            "behavior": "Signed up for Q2 event",
+            "recent_news": "Closed Series A last month",
+            "role": "VP Marketing"
+          },
+          "email": "sarah@example.com",
+          "name": "Sarah Jenkins",
+          "source": "webinar",
+          "lead_id": "9bfe965a3ce7677d159ac083",
+          "intent_score": 20,
+          "certainty_score": 32,
+          "qualification_status": "cold",
+          "needs_review": false,
+          "final_email": "DRAFT — DO NOT SEND\n\nSarah, congratulations on closing your €8M Series A last month—timing capital with growth is never trivial.\n\nSteriTech’s containment systems were designed for scale-ups like yours: 40 years of sterile filling experience, family-owned, and built to integrate with existing lines without revalidation delays. If your team is evaluating partners for aseptic processing, I can share case studies from similar Series A-backed firms in Europe.\n\nA 15-minute call next week would allow us to align on your technical requirements. Let me know a time that suits you.\n\nNo claims are made regarding regulatory compliance or clinical outcomes.\n\n---\n[Your Company Name]\n[Your Physical Business Address – required for compliance]\n[City, State, ZIP, Country]\n\nYou received this email because we believe you have an interest in our services. To unsubscribe from future emails, reply with \"Unsubscribe\" in the subject line or click here: [Unsubscribe Link]. We will remove you within 10 business days.",
+          "draft": "DRAFT — DO NOT SEND\n\nSarah, congratulations on closing your €8M Series A last month—timing capital with growth is never trivial.\n\nSteriTech’s containment systems were designed for scale-ups like yours: 40 years of sterile filling experience, family-owned, and built to integrate with existing lines without revalidation delays. If your team is evaluating partners for aseptic processing, I can share case studies from similar Series A-backed firms in Europe.\n\nA 15-minute call next week would allow us to align on your technical requirements. Let me know a time that suits you.\n\nNo claims are made regarding regulatory compliance or clinical outcomes.\n\n---\n[Your Company Name]\n[Your Physical Business Address – required for compliance]\n[City, State, ZIP, Country]\n\nYou received this email because we believe you have an interest in our services. To unsubscribe from future emails, reply with \"Unsubscribe\" in the subject line or click here: [Unsubscribe Link]. We will remove you within 10 business days.",
+          "sequence_emails": [],
+          "email_num": 1
+        }
+      ]
+    }
+  ]
+}
