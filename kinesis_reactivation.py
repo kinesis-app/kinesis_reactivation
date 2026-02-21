@@ -15,7 +15,7 @@ import pathlib
 import re
 import json
 from io import BytesIO
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import TypedDict, Optional, Dict, List
 from threading import Thread
 import time
@@ -24,7 +24,6 @@ import streamlit as st
 import pandas as pd
 from dotenv import load_dotenv
 import requests
-import langchain_community
 from langchain_community.vectorstores import FAISS
 from langchain_core.documents import Document
 from langchain_core.messages import HumanMessage, SystemMessage
@@ -61,8 +60,7 @@ LOG_PATH = pathlib.Path(os.path.dirname(os.path.abspath(__file__))) / "debug.log
 # #region agent log
 def _dbg(m: str, d: dict, h: str = "A"):
     try:
-        import json
-        p = {"id": f"log_{id(d)}", "timestamp": int(time.time() * 1000), "location": "kinesis_inbound", "message": m, "data": d, "hypothesisId": h}
+        p = {"id": f"log_{id(d)}", "timestamp": int(time.time() * 1000), "location": "kinesis_reactivation", "message": m, "data": d, "hypothesisId": h}
         with open(LOG_PATH, "a", encoding="utf-8") as f:
             f.write(json.dumps(p, default=str) + "\n")
     except Exception:
@@ -101,7 +99,7 @@ def save_client_config() -> bool:
         data = {
             "custom_compliance_rules": (st.session_state.get("custom_compliance_rules") or "").strip(),
             "industry_regulatory_context": (st.session_state.get("industry_regulatory_context") or "").strip(),
-            "last_updated": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "last_updated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         }
         with open(CLIENT_CONFIG_PATH, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2)
@@ -255,9 +253,11 @@ def load_vault():
         return None
     if os.path.exists(index_path) and os.path.isdir(index_path):
         try:
+            # SAFETY: allow_dangerous_deserialization is required for FAISS pickle loading.
+            # These index files are created locally by this application only.
             return FAISS.load_local(index_path, emb, allow_dangerous_deserialization=True)
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"[WARN] Failed to load FAISS index: {e}")
     return None
 
 
@@ -268,13 +268,15 @@ def add_docs_to_vault(docs: list) -> bool:
     index_path = os.path.join(VAULT_DIR, "faiss_index")
     try:
         if os.path.exists(index_path) and os.path.isdir(index_path):
+            # SAFETY: Index files created locally by this application only.
             v = FAISS.load_local(index_path, emb, allow_dangerous_deserialization=True)
             v.add_documents(docs)
         else:
             v = FAISS.from_documents(docs, emb)
         v.save_local(index_path)
         return True
-    except Exception:
+    except Exception as e:
+        print(f"[WARN] Failed to update FAISS vault: {e}")
         return False
 
 
@@ -450,7 +452,7 @@ def add_training_pair_to_playbook(original_draft: str, edited_draft: str, lead_i
 def check_no_response_leads() -> None:
     """Tag leads with no reply 14+ days after send as low_performer; append to learning_signals.json."""
     try:
-        cutoff = datetime.utcnow() - timedelta(days=14)
+        cutoff = datetime.now(timezone.utc) - timedelta(days=14)
         signals = []
         if os.path.isfile(LEARNING_SIGNALS_PATH):
             try:
@@ -1181,7 +1183,7 @@ def _days_since(ts_iso: Optional[str]) -> Optional[int]:
         return None
     try:
         dt = datetime.fromisoformat(ts_iso.replace("Z", "+00:00"))
-        return (datetime.utcnow() - dt).days
+        return (datetime.now(timezone.utc) - dt).days
     except Exception:
         return None
 
@@ -1639,11 +1641,15 @@ def start_flask_webhook():
 
     @app.route("/webhook", methods=["POST"])
     def webhook():
-        data = request.json or {}
-        email = data.get("email", "")
-        name = data.get("name", "")
-        source = data.get("source", "webhook")
-        row = {"email": email, "name": name, "source": source, "behavior": data.get("behavior", ""), "initial_objection": data.get("objection", "")}
+        data = request.json
+        if not data or not isinstance(data, dict):
+            return jsonify({"error": "Invalid JSON payload"}), 400
+        email = (data.get("email") or "").strip()
+        if not email or not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email):
+            return jsonify({"error": "Valid email is required"}), 400
+        name = (data.get("name") or "").strip()[:200]
+        source = (data.get("source") or "webhook").strip()[:100]
+        row = {"email": email, "name": name, "source": source, "behavior": (data.get("behavior") or "").strip()[:500], "initial_objection": (data.get("objection") or "").strip()[:500]}
         upsert_lead(row)
         webhook_csv = os.path.join(SEQUENCES_DIR, "webhook_leads.csv")
         if os.path.exists(webhook_csv):
@@ -1844,7 +1850,7 @@ def log_funnel_events(funnel_data: List[dict]) -> None:
     if not funnel_data:
         return
     path = os.path.join(SEQUENCES_DIR, "funnel_events.json")
-    batch = {"timestamp": datetime.utcnow().isoformat(), "events": funnel_data}
+    batch = {"timestamp": datetime.now(timezone.utc).isoformat(), "events": funnel_data}
     existing = []
     if os.path.exists(path):
         try:
@@ -2277,7 +2283,7 @@ with tab_dashboard:
 with tab_statistics:
     # ---- Section 1: Overview metrics ----
     period = st.radio("Period", ["This month", "All time"], horizontal=True, key="stats_period")
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     this_month_prefix = now.strftime("%Y-%m")
     lead_ids = get_all_lead_ids()
     if period == "This month":
@@ -2349,7 +2355,7 @@ with tab_statistics:
     max_stopped_idx = max(range(len(funnel_rows)), key=lambda i: funnel_rows[i]["Stopped"]) if funnel_rows else 0
     for i, row in enumerate(funnel_rows):
         dropout_frac = (row["Dropout %"] / 100.0) if row["Dropout %"] else 0
-        st.progress(min(dropout_frac, 1.0))
+        st.progress(max(0.0, min(dropout_frac, 1.0)))
         if i == max_stopped_idx and row["Stopped"] > 0:
             st.error(f"Critical dropout point — {row['Dropout %']}% of all leads stop here")
     st.markdown("---")

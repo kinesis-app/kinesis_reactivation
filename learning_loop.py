@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import os
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List, Dict
 from collections import Counter
 
@@ -31,7 +31,7 @@ def load_learning_memory() -> dict:
 
 
 def save_learning_memory(data: dict) -> None:
-    data["last_updated"] = datetime.utcnow().isoformat()
+    data["last_updated"] = datetime.now(timezone.utc).isoformat()
     try:
         with open(LEARNING_MEMORY_PATH, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
@@ -85,7 +85,7 @@ def merge_patterns_into_learning(patterns: dict, max_per_category: int = 50) -> 
         lst = mem.get(key, [])
         for item in patterns.get(key, []):
             if isinstance(item, dict):
-                lst.append({**item, "learned_at": datetime.utcnow().isoformat()})
+                lst.append({**item, "learned_at": datetime.now(timezone.utc).isoformat()})
         mem[key] = lst[-max_per_category:]
     save_learning_memory(mem)
 

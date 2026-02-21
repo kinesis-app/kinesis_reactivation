@@ -7,7 +7,7 @@ Produces: intent_score (0–100), certainty_score (0–100).
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional, List
 
 
@@ -58,7 +58,7 @@ def _recency_bonus(last_event_ts: Optional[str]) -> int:
         dt = datetime.fromisoformat(last_event_ts.replace("Z", "+00:00"))
     except Exception:
         return 0
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     delta = now - dt
     if delta.days < 1:
         return 15

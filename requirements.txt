@@ -1,0 +1,33 @@
+# Kinesis Reactivation — Dependencies
+# Last updated: 2026-02-21
+
+# UI Framework
+streamlit>=1.54.0
+
+# Data
+pandas>=2.2.0
+
+# Environment
+python-dotenv>=1.0.0
+
+# HTTP
+requests>=2.32.0
+
+# LangChain Ecosystem
+langchain-core>=1.2.14
+langchain-community>=0.4.1
+langchain-text-splitters>=1.1.1
+langchain-mistralai>=1.1.1
+langchain-openai>=1.1.10
+
+# LangGraph (State Graph orchestration)
+langgraph>=1.0.9
+
+# Vector Database
+faiss-cpu>=1.13.2
+
+# PDF Parsing
+pypdf>=5.0.0
+
+# Webhook Server
+flask>=3.1.0

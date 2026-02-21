@@ -12,7 +12,7 @@ import os
 import json
 import sqlite3
 import hashlib
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional, List, Dict, Any
 
 
@@ -86,7 +86,7 @@ def upsert_lead(row: dict) -> str:
     conn = _get_conn()
     if conn:
         try:
-            now = datetime.utcnow().isoformat()
+            now = datetime.now(timezone.utc).isoformat()
             conn.execute(
                 """INSERT INTO leads (lead_id, name, email, source, created_at, updated_at, raw_row)
                    VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -114,8 +114,8 @@ def upsert_lead(row: dict) -> str:
             except Exception:
                 pass
         if lead_id not in data:
-            data[lead_id] = {"lead_id": lead_id, "name": row.get("name", ""), "email": row.get("email", ""), "source": row.get("source", ""), "created_at": datetime.utcnow().isoformat(), "history": []}
-        data[lead_id].update({"name": row.get("name", ""), "email": row.get("email", ""), "source": row.get("source", ""), "updated_at": datetime.utcnow().isoformat()})
+            data[lead_id] = {"lead_id": lead_id, "name": row.get("name", ""), "email": row.get("email", ""), "source": row.get("source", ""), "created_at": datetime.now(timezone.utc).isoformat(), "history": []}
+        data[lead_id].update({"name": row.get("name", ""), "email": row.get("email", ""), "source": row.get("source", ""), "updated_at": datetime.now(timezone.utc).isoformat()})
         try:
             with open(LEADS_JSON, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2, ensure_ascii=False)
@@ -137,7 +137,7 @@ def append_history(
     qualification_status: Optional[str] = None,
     event_data: Optional[dict] = None,
 ) -> None:
-    ts = datetime.utcnow().isoformat()
+    ts = datetime.now(timezone.utc).isoformat()
     event_json = json.dumps(event_data, default=str) if event_data else None
     conn = _get_conn()
     if conn:
@@ -234,7 +234,7 @@ def update_lead_status(lead_id: str, status: str) -> None:
     conn = _get_conn()
     if conn:
         try:
-            conn.execute("UPDATE leads SET status = ?, updated_at = ? WHERE lead_id = ?", (status, datetime.utcnow().isoformat(), lead_id))
+            conn.execute("UPDATE leads SET status = ?, updated_at = ? WHERE lead_id = ?", (status, datetime.now(timezone.utc).isoformat(), lead_id))
             conn.commit()
         finally:
             conn.close()
@@ -248,7 +248,7 @@ def update_lead_status(lead_id: str, status: str) -> None:
                 pass
         if lead_id in data:
             data[lead_id]["status"] = status
-            data[lead_id]["updated_at"] = datetime.utcnow().isoformat()
+            data[lead_id]["updated_at"] = datetime.now(timezone.utc).isoformat()
             try:
                 with open(LEADS_JSON, "w", encoding="utf-8") as f:
                     json.dump(data, f, indent=2, ensure_ascii=False)

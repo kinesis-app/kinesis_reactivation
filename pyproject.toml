@@ -1,0 +1,20 @@
+[project]
+name = "kinesis-reactivation"
+version = "1.0.0"
+description = "Kinesis Reactivation — RAG + LangGraph Dormant CRM Lead Re-engagement"
+requires-python = ">=3.14"
+dependencies = [
+    "streamlit>=1.54.0",
+    "pandas>=2.2.0",
+    "python-dotenv>=1.0.0",
+    "requests>=2.32.0",
+    "langchain-core>=1.2.14",
+    "langchain-community>=0.4.1",
+    "langchain-text-splitters>=1.1.1",
+    "langchain-mistralai>=1.1.1",
+    "langchain-openai>=1.1.10",
+    "langgraph>=1.0.9",
+    "faiss-cpu>=1.13.2",
+    "pypdf>=5.0.0",
+    "flask>=3.1.0",
+]
