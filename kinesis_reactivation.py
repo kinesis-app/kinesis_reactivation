@@ -75,10 +75,39 @@ print(f"MISTRAL_API_KEY loaded: {os.getenv('MISTRAL_API_KEY') is not None}")
 APP_DIR = os.path.dirname(os.path.abspath(__file__))
 PLAYBOOK_PATH = os.path.join(APP_DIR, "playbook.json")
 LEARNING_SIGNALS_PATH = os.path.join(APP_DIR, "learning_signals.json")
+CLIENT_CONFIG_PATH = os.path.join(APP_DIR, "client_config.json")
 VAULT_DIR = os.path.join(APP_DIR, "vault_data")
 SEQUENCES_DIR = os.path.join(APP_DIR, "sequences_data")
 os.makedirs(VAULT_DIR, exist_ok=True)
 os.makedirs(SEQUENCES_DIR, exist_ok=True)
+
+
+def load_client_config() -> dict:
+    """Load client compliance config from JSON. Returns dict with custom_compliance_rules, industry_regulatory_context, last_updated."""
+    default = {"custom_compliance_rules": "", "industry_regulatory_context": "", "last_updated": ""}
+    if not os.path.isfile(CLIENT_CONFIG_PATH):
+        return default
+    try:
+        with open(CLIENT_CONFIG_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        return {**default, **{k: data.get(k, default[k]) for k in default}}
+    except Exception:
+        return default
+
+
+def save_client_config() -> bool:
+    """Save session_state compliance fields to client_config.json with last_updated. Returns True on success."""
+    try:
+        data = {
+            "custom_compliance_rules": (st.session_state.get("custom_compliance_rules") or "").strip(),
+            "industry_regulatory_context": (st.session_state.get("industry_regulatory_context") or "").strip(),
+            "last_updated": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+        }
+        with open(CLIENT_CONFIG_PATH, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2)
+        return True
+    except Exception:
+        return False
 
 # Constants
 LEGAL_FOOTER = """
@@ -115,6 +144,13 @@ SCENARIO_CONFIG = {
 }
 
 st.set_page_config(page_title="Kinesis Reactivation — Old CRM Leads", layout="wide", initial_sidebar_state="expanded")
+
+# Load client compliance config into session_state on startup (persists across server restarts)
+if "custom_compliance_rules" not in st.session_state:
+    _cfg = load_client_config()
+    st.session_state["custom_compliance_rules"] = _cfg.get("custom_compliance_rules", "")
+    st.session_state["industry_regulatory_context"] = _cfg.get("industry_regulatory_context", "")
+    st.session_state["client_config_last_updated"] = _cfg.get("last_updated", "")
 
 if not os.getenv("MISTRAL_API_KEY"):
     st.error("Missing MISTRAL_API_KEY in .env")
@@ -977,6 +1013,19 @@ def node_legal(state: InboundLeadState) -> InboundLeadState:
 3. GDPR/CAN-SPAM: must have clear unsubscribe and physical address (we append footer).
 4. FDA-style: no absolute efficacy claims.
 Reply VERDICT: SAFE or VERDICT: UNSAFE and Rejection Note: [what to fix]."""
+    # Client-specific compliance rules (from Admin sidebar)
+    custom_rules = (st.session_state.get("custom_compliance_rules") or "").strip()
+    if custom_rules:
+        system += "\n\nCLIENT-SPECIFIC COMPLIANCE RULES (these override and supplement the general rules above — apply all of them strictly to every draft):\n" + custom_rules
+    # Industry regulatory context: inject into vault query and as background for legal reviewer
+    industry_context = (st.session_state.get("industry_regulatory_context") or "").strip()
+    if industry_context:
+        vault_query = (industry_context[:500] + "…") if len(industry_context) > 500 else industry_context
+        reg_chunks = vault_retrieve(vault_query, k=5)
+        reg_citations = format_citations(reg_chunks)
+        system += "\n\nREGULATORY BACKGROUND (client-provided and vault):\n" + industry_context
+        if reg_citations:
+            system += "\n\nVault excerpts:\n" + reg_citations
     try:
         resp = llm.invoke([SystemMessage(content=system), HumanMessage(content=f"Draft to review:\n{full}")])
         text = (resp.content or "").strip().upper()
@@ -1882,6 +1931,31 @@ with st.sidebar:
             start_flask_webhook()
             st.success("Webhook running. Use ngrok: ngrok http 5000")
 
+        st.divider()
+        st.subheader("⚖️ Compliance Rules")
+        st.caption("Enter the regulatory and legal rules specific to this client. These are injected into the AI compliance reviewer and applied to every email before it can be approved.")
+        st.text_area(
+            "Client-specific compliance rules",
+            value=st.session_state.get("custom_compliance_rules", ""),
+            height=200,
+            key="custom_compliance_rules",
+            placeholder="Examples: Do not reference clinical outcomes without citing a specific published study. Do not name competitor products by name. Do not contact individuals titled Healthcare Professional in Germany without documented prior consent. Do not make claims about regulatory approval for indications not yet approved by EMA or FDA.",
+        )
+        st.subheader("📜 Industry Regulatory Context")
+        st.caption("Upload key excerpts from industry regulations, association codes of conduct, or regulatory guidelines relevant to this client. The AI uses this as background knowledge when reviewing drafts.")
+        st.text_area(
+            "Industry regulatory context",
+            value=st.session_state.get("industry_regulatory_context", ""),
+            height=300,
+            key="industry_regulatory_context",
+        )
+        if st.session_state.get("client_config_last_updated"):
+            st.caption(f"Last updated: {st.session_state['client_config_last_updated']}")
+        if st.button("Save compliance settings", key="save_compliance"):
+            if save_client_config():
+                st.session_state["client_config_last_updated"] = load_client_config().get("last_updated", "")
+                st.success("Compliance settings saved.")
+
     st.divider()
     csv_file = st.file_uploader("Upload Inbound CSV", type=["csv"], key="inbound_csv")
     st.caption("Columns: name, email, source (use 'reactivation'), last_contact_date, past_project, dormant_reason, previous_revenue, behavior, initial_objection")
@@ -1958,6 +2032,12 @@ with tab_dashboard:
                                 f'<div style="background-color: {bar_bg}; color: {bar_text}; padding: 8px 12px; margin: 8px 0; border-radius: 4px; font-weight: bold;">Score: {conf_val}/100</div>',
                                 unsafe_allow_html=True,
                             )
+                            with st.expander("Compliance rules active for this client", expanded=False):
+                                _rules = st.session_state.get("custom_compliance_rules") or ""
+                                if (_rules or "").strip():
+                                    st.text(_rules)
+                                else:
+                                    st.caption("Using general compliance rules only — no client-specific rules configured.")
                             draft_text = seq.get("final_email") or seq.get("draft") or ""
                             st.markdown(f"---")
                             certainty = seq.get("certainty_score")
@@ -2125,6 +2205,12 @@ with tab_dashboard:
                                     f'<div style="background-color: {bar_bg}; color: {bar_text}; padding: 8px 12px; margin: 8px 0; border-radius: 4px; font-weight: bold;">Score: {conf}/100</div>',
                                     unsafe_allow_html=True,
                                 )
+                                with st.expander("Compliance rules active for this client", expanded=False):
+                                    _rules = st.session_state.get("custom_compliance_rules") or ""
+                                    if (_rules or "").strip():
+                                        st.text(_rules)
+                                    else:
+                                        st.caption("Using general compliance rules only — no client-specific rules configured.")
                                 st.markdown(f"Score {conf}/100 | Vault alignment: {vault_align} | Risk flags: {risk_flags}")
                                 st.markdown(f"**Email {email_num}** — Confidence: {color} {conf}/100 | Intent: {intent}% | Status: {qual}")
                                 if conf is not None and (seq.get("draft_confidence_explanation") or seq.get("draft_risk_flags")):
