@@ -2,7 +2,7 @@
 Real Confidence & Certainty Scoring — Grounded in measurable signals.
 
 Combines: behavioral signals, objection severity, tone, recency, engagement depth.
-Produces: intent_score (0–100), certainty_score (0–100).
+Produces: intent_score (0-100), certainty_score (0-100).
 """
 
 from __future__ import annotations

@@ -15,8 +15,10 @@ import hashlib
 from datetime import datetime, timezone
 from typing import Optional, List, Dict, Any
 
+from src.config import PROJECT_ROOT
 
-APP_DIR = os.path.dirname(os.path.abspath(__file__))
+
+APP_DIR = PROJECT_ROOT
 MEMORY_DIR = os.path.join(APP_DIR, "memory")
 os.makedirs(MEMORY_DIR, exist_ok=True)
 LEADS_DB = os.path.join(MEMORY_DIR, "leads.db")

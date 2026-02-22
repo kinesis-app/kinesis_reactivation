@@ -13,8 +13,10 @@ from datetime import datetime, timezone
 from typing import List, Dict
 from collections import Counter
 
+from src.config import PROJECT_ROOT
 
-APP_DIR = os.path.dirname(os.path.abspath(__file__))
+
+APP_DIR = PROJECT_ROOT
 LEARNING_MEMORY_PATH = os.path.join(APP_DIR, "learning_memory.json")
 PLAYBOOK_PATH = os.path.join(APP_DIR, "playbook.json")
 
@@ -47,7 +49,7 @@ def extract_patterns_from_outcome(outcome: str, lead_data: dict, sequence_data: 
             objections.append(seq.get("detected_objection") or "unknown")
             tone_signals.append(seq.get("reply_tone") or seq.get("tone_analysis") or "")
         draft = (seq.get("final_email") or seq.get("draft") or "")[:500]
-        if draft and "DRAFT — DO NOT SEND" not in draft[:50]:
+        if draft and "DRAFT \u2014 DO NOT SEND" not in draft[:50]:
             messaging_snippets.append({"text": draft[:300], "intent": seq.get("intent_score"), "status": seq.get("qualification_status")})
     if outcome == "converted":
         for s in messaging_snippets:
@@ -104,14 +106,14 @@ def get_learned_patterns() -> str:
         for w in wins:
             snip = w.get("snippet", "")[:200]
             if snip:
-                lines.append(f"  - {snip}…")
+                lines.append(f"  - {snip}\u2026")
     fails = mem.get("failed_messaging", [])[-5:]
     if fails:
         lines.append("FAILED MESSAGING (avoid):")
         for f in fails:
             snip = f.get("snippet", "")[:200]
             if snip:
-                lines.append(f"  - {snip}… (objection: {f.get('objection','')})")
+                lines.append(f"  - {snip}\u2026 (objection: {f.get('objection','')})")
     objections = mem.get("key_objections", [])[-10:]
     if objections:
         cnt = Counter(o.get("label", "") for o in objections if o.get("label"))
