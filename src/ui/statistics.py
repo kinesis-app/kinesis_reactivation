@@ -88,7 +88,7 @@ def render_statistics():
         pct = (stopped / total_entered * 100) if total_entered else 0
         funnel_rows.append({"Stage": name, "Reached": entered, "Stopped": stopped, "Dropout %": round(pct, 1)})
     funnel_df = pd.DataFrame(funnel_rows)
-    st.dataframe(funnel_df, use_container_width=True)
+    st.dataframe(funnel_df, width="stretch")
     max_stopped_idx = max(range(len(funnel_rows)), key=lambda i: funnel_rows[i]["Stopped"]) if funnel_rows else 0
     for i, row in enumerate(funnel_rows):
         dropout_frac = (row["Dropout %"] / 100.0) if row["Dropout %"] else 0

@@ -36,7 +36,7 @@ def render_dashboard(csv_file, legal_footer: str, from_email: str, from_name: st
                 st.error(f"CSV must have columns: {required_cols}")
             else:
                 st.subheader("\U0001f4ca Leads Dashboard")
-                st.dataframe(df.head(50), use_container_width=True)
+                st.dataframe(df.head(50), width="stretch")
 
                 if st.button("Generate Nurturing Sequences", type="primary"):
                     api_key = os.getenv("MISTRAL_API_KEY")
